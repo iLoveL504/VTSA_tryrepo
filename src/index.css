@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+*{
+  margin: 0;
+  padding: 0; 
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+nav{
+  background-color: rgb(35, 70, 120);
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+nav div{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+nav .Menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  min-height: 60px;
+  min-width: 60px;
+  transition: 0.3 background-color;
+}
+
+nav .Menu-icon:hover {
+  background-color: rgb(50, 90, 150);
+}
+
+nav .Profile-Icon {
+  /* margin-left: auto; */
+  padding-right: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;  
+  color: aliceblue
+}
+nav .Notification-Icon {
+  margin-left: auto;
+  gap: 10px;
+  min-height: 60px;
+  min-width: 60px;
+  color: aliceblue;
+  cursor: pointer;
+  position: relative; 
+}
+
+nav .Notifications {
+  position: absolute;
+  user-select: none;
+  top: 8px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-radius: 50%;
+  font-family: sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem; 
+} 
+
+nav .NotificationList{
+  display: flex;
+  flex-direction: column;
+  /* padding: 1rem; */
+  justify-content: flex-start;
+  background-color: rgb(238, 238, 238);
+  color: black;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  min-width: 290px;
+  height: 400px;
+  transition: 0.3s height;
+  overflow: auto;
+}
+
+nav .NotificationList div {
+
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  
+  border-bottom: 1px solid #ccc;
+}
+
+nav .NotificationList ul li{
+
+  z-index: -100;
+  width: 100%;
+}
+
+nav .NotificationList.Hidden{
+  /* display: none; */
+  height: 0px;
+}
+
+nav .NotificationList ul {
+  list-style: none;
+  display: block;
+}
+
+
+nav .NotificationList ul li {
+  padding: 0.5rem;
+  align-items: center;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: 0.3s background-color;
+}
+
+nav .NotificationList ul li:hover {
+  background-color: rgb(213, 213, 213);
+}
+ 
+
+nav .Notification-Icon:hover {
+  background-color: rgb(50, 90, 150);
+}
+
+
+.Menu{
+  background-color: rgb(35, 70, 120);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: aliceblue;
+  min-width: 150px;
+  transition: 0.3s transform;
+}
+
+.Menu.Hidden {
+  background-color: rgb(35, 70, 120);
+  color: aliceblue;
+  transform: translatex(-100%); 
+}
+
+
+.Menu ul {
+  list-style: none;
+  margin: 0px;
+  padding: 0.5rem;
+  display: block;
+  transition: 0.5s background-color;
+}
+
+.Menu ul a {
+  text-decoration: none;
+  color: aliceblue;
+  padding: 0.5rem;
+}
+
+.Menu ul li {
+  display: flex;
+  align-items: center;
+  padding: .5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: 0.3s background-color;
+}
+
+.Menu li:hover {
+  background-color: rgb(50, 90, 150);
+}
+
+section {
+  min-height: 100vh;
+  background-color: rgb(255, 255, 255);
+  display: flex;
+
+}
+
+/*Dashboard styling*/
+.content {
+  flex: 1;
+  padding: 20px;
+  position: relative;
+  display: flex;
+  gap: 20px;
+}
+
+.left-panel {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.right-panel {
+  flex: 1;
+  background: #f0f0f0;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.box {
+      background: #e0e0e0;
+      border-radius: 10px;
+      padding: 15px;
+}
+
+.new-project-button {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background-color: #0066ff;
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+}
+
