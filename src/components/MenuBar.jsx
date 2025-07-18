@@ -5,12 +5,13 @@ import { RiTeamFill } from "react-icons/ri"
 import { GoProjectRoadmap } from "react-icons/go";
 import { IoIosDocument } from "react-icons/io";
 import { useNavigate, Routes, Route } from 'react-router-dom';
+import { BiSolidLogOut } from "react-icons/bi"
 import Dashboard from "./Dashboard";
 
 const MenuBar = ({menuToggle}) => {
   const navigate = useNavigate();
   return (
-    <div className={`Menu${menuToggle ? '' : ' Hidden'}`}>
+    <div className={`Menu${!menuToggle ? '' : ' Hidden'}`}>
         <ul>
             <li>
               <MdDashboard style={{ color: 'white' }}/>
@@ -40,6 +41,8 @@ const MenuBar = ({menuToggle}) => {
               <a href="">Baby Book</a>
             </li>
         </ul>
+
+        <div className="Logout"><span><BiSolidLogOut /></span>Log Out</div>
     </div>
   )
 }

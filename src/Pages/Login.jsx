@@ -5,7 +5,7 @@ import useToggle from '../hooks/useToggle';
 import { HiMiniExclamationCircle } from "react-icons/hi2";
 import Users from '../database/Users'
 import { ToastContainer, toast } from 'react-toastify'
-import { axios } from '../api/axios'
+import { Axios } from '../api/axios'
 
 const Login = () => {
     const [showPassword, setShowPassword] = useToggle();
@@ -63,7 +63,11 @@ const Login = () => {
             toast(notFoundMsg, {position: 'top-center'})
         } else {
             console.log('user found')
-            await axios.get('/')
+            try{
+                await Axios.post("/", { user, pwd })
+            } catch (err) {
+                console.log(err)
+            }
         }
     }
 

@@ -13,14 +13,17 @@ function App() {
     <>
       <div>
         <NavBar invertMenuToggle={invertMenuToggle}/>
-        <section>
-          <MenuBar menuToggle={menuToggle} navigate={navigate}/>
+        <main>
+          <div className={menuToggle ? '' : 'menuOn'}>
+          </div>
+            <MenuBar menuToggle={menuToggle} navigate={navigate}/>
             <div style={{ flex: 1 }}>
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
               </Routes>
             </div>
-        </section>
+          
+        </main>
       </div>
     </>
   )
