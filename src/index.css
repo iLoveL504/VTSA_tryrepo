@@ -88,6 +88,7 @@ nav .NotificationList{
   height: 400px;
   transition: 0.3s height;
   overflow: auto;
+  z-index: 1000;
 }
 
 nav .NotificationList div {
