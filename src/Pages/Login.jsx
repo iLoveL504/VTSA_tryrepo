@@ -3,11 +3,15 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import './../Login.css'
 import useToggle from '../hooks/useToggle';
 import { HiMiniExclamationCircle } from "react-icons/hi2";
-import Users from '../database/Users'
 import { ToastContainer, toast } from 'react-toastify'
-import { Axios } from '../api/axios'
+import {Axios} from '../api/axios'
+import { useNavigate } from 'react-router-dom'
+import { useStoreActions } from 'easy-peasy';
 
-const Login = () => {
+const Login = ({setRoles}) => {
+    const setAuthUser = useStoreActions((actions) => actions.setUser)
+    const navigate = useNavigate()
+
     const [showPassword, setShowPassword] = useToggle();
     const userRef = useRef(null);
 
@@ -34,7 +38,6 @@ const Login = () => {
         console.log('useEffect is fired')
     }, [user, pwd])
 
-    const notify = () => toast("Wow so easy!");
     const missingMsg = ({ closeToast, toastProps }) => (
         <div>
             You must provide both username and password
@@ -56,64 +59,99 @@ const Login = () => {
             return
         } 
         console.log(`Username: ${user}, Password: ${pwd}`)
-        const foundUser = Users.find(users => { return users.user === user && users.pwd === pwd})
-        
-        
-        if(!foundUser) {
-            toast(notFoundMsg, {position: 'top-center'})
-        } else {
-            console.log('user found')
             try{
-                await Axios.post("/", { user, pwd })
+                const result = await Axios.post("/auth",
+                    JSON.stringify({ user, pwd }),
+                    {
+                        headers: { 'Content-Type': 'application/json'},
+                        withCredentials: true,
+                    }
+                    )
+                console.log(result)
+                if(result.status === 401) {
+                     toast(notFoundMsg, {position: 'top-center'})
+                     return
+                }
+                if(result.status === 200){
+                    console.log(result.data.roles)
+                    setAuthUser({username: user, roles: result.data.roles})
+                    navigate('/dashboard')
+                }
             } catch (err) {
                 console.log(err)
             }
-        }
+        
     }
 
     
 
     return (
-        <div className="LoginPage">
-            <ToastContainer />
-            <div className="LoginForm">
-                <h1>Login</h1>
-                <form onSubmit={(e) => handleSubmit}>
-                    <label htmlFor="Username">Username</label>
-                    <input 
-                        type="text"
-                        ref={userRef}
-                        value={user}
-                        onChange={e => setUser(e.target.value)}
-                        required
-                    />
-                    {userMissing && <span className='Missing'>
-                        <HiMiniExclamationCircle /> Username is required
-                    </span> }
-                    
-                    <label htmlFor="Password">Password</label>
-                    <div className="PasswordInput">
-                        <input 
-                            type={`${!showPassword ? 'text' : 'pwd'}`} 
-                            value={pwd}
-                            onChange={e => setPwd(e.target.value)}
-                            required
-                        />
-                        <span onClick={setShowPassword} className="PasswordIcon">
-                            {!showPassword ? 
-                                <FaRegEye size={20} /> :
-                                <FaRegEyeSlash size={20} />}
-                        </span>
-                    </div>
-                    {pwdMissing && <span className='Missing'>
-                        <HiMiniExclamationCircle /> Password is required
-                    </span> }
-                
-                    
-                    <button onClick={handleSubmit} type="submit">Login</button>
-                </form>
-            </div>
+        <div className="login-container">
+      <ToastContainer />
+      <div className="login-card">
+        <div className="login-header">
+          <h1>Welcome Back</h1>
+          <p>Please enter your credentials to login</p>
         </div>
+
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className={`form-group ${userMissing ? 'error' : ''}`}>
+            <label htmlFor="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              ref={userRef}
+              value={user}
+              onChange={(e) => setUser(e.target.value)}
+              placeholder="Enter your username"
+              className="form-input"
+            />
+            {userMissing && (
+              <span className="error-message">
+                <HiMiniExclamationCircle /> Username is required
+              </span>
+            )}
+          </div>
+
+          <div className={`form-group ${pwdMissing ? 'error' : ''}`}>
+            <label htmlFor="password">Password</label>
+            <div className="password-input">
+              <input
+                type={showPassword ? 'password' : 'text'}
+                id="password"
+                value={pwd}
+                onChange={(e) => setPwd(e.target.value)}
+                placeholder="Enter your password"
+                className="form-input"
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+              </button>
+            </div>
+            {pwdMissing && (
+              <span className="error-message">
+                <HiMiniExclamationCircle /> Password is required
+              </span>
+            )}
+          </div>
+
+          <button type="submit" className="login-button">
+            Sign In
+          </button>
+        </form>
+
+        <div className="login-footer">
+          <a href="/forgot-password" className="forgot-password">
+            Forgot password?
+          </a>
+        </div>
+      </div>
+    </div>
 
   )
 }

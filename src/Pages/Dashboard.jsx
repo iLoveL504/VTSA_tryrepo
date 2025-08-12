@@ -1,7 +1,11 @@
+import { useLocation } from 'react-router-dom'
+
 const Dashboard = () => {
+  const location = useLocation()
+  console.log(location)
   return (
     <>
-      <div className="content">
+      <div className="Content">
         <div className="left-panel">
           <div className="box">
             <h3 className="box-header">Ongoing Project/s:</h3>
