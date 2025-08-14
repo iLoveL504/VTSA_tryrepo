@@ -5,7 +5,7 @@ const Dashboard = () => {
   console.log(location)
   return (
     <>
-      <div className="Content">
+      <div className="Content Dashboard">
         <div className="left-panel">
           <div className="box">
             <h3 className="box-header">Ongoing Project/s:</h3>

@@ -14,6 +14,7 @@ const NavBar = ({ invertMenuToggle }) => {
   const handleNotif = () => {
     setNotifs(prev => prev + 1);
   }
+  console.log(user.username)
   return (
     <nav>
       <div onClick={() => invertMenuToggle() } className="Menu-icon">

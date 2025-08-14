@@ -34,7 +34,6 @@ function App() {
   useEffect(() => {
     setProjects(projData)
   }, [projData])
-  console.log(empData)
   const location = useLocation()
   return (
       <Routes>

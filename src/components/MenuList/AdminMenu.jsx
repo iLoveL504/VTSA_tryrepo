@@ -11,6 +11,7 @@ const AdminMenu = () => {
   const navigate = useNavigate()
   return (
     <>
+        <p>menu ng manager</p>
         <ul>
           <Link to="/dashboard">
             <li>
@@ -52,7 +53,7 @@ const AdminMenu = () => {
           
         </ul>
 
-        <div className="Logout"><span><BiSolidLogOut /></span>Log Out</div>
+        <div className="Logout" onClick={() => navigate('/login')}><span><BiSolidLogOut /></span>Log Out</div>
     </>      
   )
 }

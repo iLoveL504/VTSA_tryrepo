@@ -16,7 +16,7 @@ const Projects = () => {
         </Link>
         
       </div>
-      <div className="EmployeeList">
+      <div>
           <ProjectList projects={projects}/>
       </div>
     </div>

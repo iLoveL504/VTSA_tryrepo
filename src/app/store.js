@@ -2,7 +2,7 @@ import { createStore, action, thunk, computed } from "easy-peasy"
 import {Axios} from '../api/axios.js'
 
 export default createStore({
-    user: { },
+    user: { username: null, roles: null },
     setUser: action((state, payload) => {
         state.user.username = payload.username
         state.user.roles = payload.roles
@@ -12,7 +12,7 @@ export default createStore({
         state.employees = payload
         state.searchResults = payload
     }),
-    isLoadoing: false,
+    isLoading: false,
     setIsLoading: action((state, payload) => {
         state.isLoading = payload
     }),
@@ -45,4 +45,5 @@ export default createStore({
     setProjects: action((state, payload) => {
         state.projects = payload
     })
+
 })
