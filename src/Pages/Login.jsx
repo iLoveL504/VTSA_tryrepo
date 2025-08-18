@@ -7,6 +7,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import {Axios} from '../api/axios'
 import { useNavigate } from 'react-router-dom'
 import { useStoreActions } from 'easy-peasy';
+import { jwtDecode } from "jwt-decode";
 
 const Login = ({setRoles}) => {
     const setAuthUser = useStoreActions((actions) => actions.setUser)
@@ -50,6 +51,12 @@ const Login = ({setRoles}) => {
             <button onClick={closeToast}>Close</button>
         </div>
     )
+    const wrongCredentials = ({closeToast, toast}) => (
+        <div>
+            Incorrect username or password
+            <button onClick={closeToast}>Close</button>
+        </div>
+    )
     const handleSubmit = async (e) => {
         e.preventDefault()
         console.log(userMissing)
@@ -58,7 +65,6 @@ const Login = ({setRoles}) => {
             toast(missingMsg, {position: 'top-center'})
             return
         } 
-        console.log(`Username: ${user}, Password: ${pwd}`)
             try{
                 const result = await Axios.post("/auth",
                     JSON.stringify({ user, pwd }),
@@ -67,17 +73,18 @@ const Login = ({setRoles}) => {
                         withCredentials: true,
                     }
                     )
-                console.log(result)
-                if(result.status === 401) {
-                     toast(notFoundMsg, {position: 'top-center'})
-                     return
-                }
+                console.log('hi')
                 if(result.status === 200){
-                    console.log(result.data.roles)
-                    setAuthUser({username: user, roles: result.data.roles})
-                    navigate('/dashboard')
+                  const token = jwtDecode(result.data.accessToken)
+                  const { username, roles } = token.UserInfo
+                  sessionStorage.setItem("username", username)
+                  sessionStorage.setItem("roles", roles)
+                  console.log(roles)
+                  setAuthUser({username: user, roles: result.data.roles})
+                  navigate('/dashboard')
                 }
             } catch (err) {
+              toast(wrongCredentials, {position: 'top-center'})
                 console.log(err)
             }
         

@@ -12,7 +12,6 @@ const TechnicianMenu = () => {
   const navigate = useNavigate()
   return (
     <>
-        <p>menu ng cook</p>
         <ul>
             <li>
               <MdDashboard style={{ color: 'white' }}/>

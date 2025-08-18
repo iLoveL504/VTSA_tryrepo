@@ -1,8 +1,8 @@
 import useToggle from '../hooks/useToggle'
 import { useAuth } from '../hooks/useAuth'
-import MenuBar from '../components/MenuBar'
+import MenuBar from '../components/UI/MenuBar'
 import { Outlet } from 'react-router-dom'
-import NavBar from '../components/NavBar'
+import NavBar from '../components/UI/NavBar'
 
 const Layout = () => {
     const [menuToggle, invertMenuToggle] = useToggle()

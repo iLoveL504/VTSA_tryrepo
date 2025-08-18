@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { IoMdMenu } from "react-icons/io"
 import { CgProfile } from "react-icons/cg"
 import { IoIosNotifications } from "react-icons/io";
-import useToggle from '../hooks/useToggle';
+import useToggle from '../../hooks/useToggle';
 import { Grid } from 'ldrs/react'
 import 'ldrs/react/Grid.css'
 import { useStoreState } from 'easy-peasy'
@@ -14,18 +14,11 @@ const NavBar = ({ invertMenuToggle }) => {
   const handleNotif = () => {
     setNotifs(prev => prev + 1);
   }
-  console.log(user.username)
   return (
     <nav>
       <div onClick={() => invertMenuToggle() } className="Menu-icon">
         <IoMdMenu size={40} style={{ color: 'white' }}/>
       </div>
-      <Grid
-          size="60"
-          speed="1.5"
-          color="rgba(84, 176, 210, 1)" 
-      />
-      <div onClick={() => handleNotif()}>Click me</div>
       <div onClick={() => invertNotifToggle()} className="Notification-Icon">
         <IoIosNotifications className="BellIcon" size={30} style={{ color: 'white' }}/>
         

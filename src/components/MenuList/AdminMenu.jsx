@@ -11,7 +11,6 @@ const AdminMenu = () => {
   const navigate = useNavigate()
   return (
     <>
-        <p>menu ng manager</p>
         <ul>
           <Link to="/dashboard">
             <li>

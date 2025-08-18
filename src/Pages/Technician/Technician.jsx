@@ -6,7 +6,7 @@ import { useStoreState, useStoreActions } from 'easy-peasy'
 // Default values shown
 
 import {Axios} from '../../api/axios'
-import EmployeeList from '../../components/EmployeeList'
+import EmployeeList from '../../components/EmployeeComponents/EmployeeList'
 
 const Technician = () => {
     // const [ searchEmployee, setSearchEmployee ] = useState('')

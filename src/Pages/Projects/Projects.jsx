@@ -1,7 +1,7 @@
 import React from 'react'
 import { Outlet, Link, Routes, Route, useLocation } from 'react-router-dom';
 import { useStoreState } from 'easy-peasy'
-import ProjectList from '../../components/ProjectList'
+import ProjectList from '../../components/ProjectComponents/ProjectList'
 
 const Projects = () => {
 

@@ -30,10 +30,6 @@ export default createStore({
             .includes(state.searchEmployee.toLowerCase()))
         return sortedSearch
     }),
-    employeeId: 4,
-    setEmployeeId: action((state, payload) => {
-        state.employeeId = payload
-    }),
     searchSetEmployee: thunk((actions, payload, helpers) => {
         const { getState } = helpers;
         const state = getState()
@@ -44,6 +40,14 @@ export default createStore({
     projects: [],
     setProjects: action((state, payload) => {
         state.projects = payload
+    }),
+    searchSetProject: thunk((actions, payload, helpers) => {
+        const { getState } = helpers;
+        const state = getState()
+        const pId = Number(payload)
+        
+        const proj = state.projects.find(p => p.id === pId);
+        console.log(proj)
+        return proj
     })
-
 })
