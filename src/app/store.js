@@ -12,6 +12,10 @@ export default createStore({
         state.employees = payload
         state.searchResults = payload
     }),
+    notifications: [],
+    setNotifications: action((state, payload) => {
+        state.notifications = payload
+    }),
     isLoading: false,
     setIsLoading: action((state, payload) => {
         state.isLoading = payload
@@ -49,5 +53,9 @@ export default createStore({
         const proj = state.projects.find(p => p.id === pId);
         console.log(proj)
         return proj
+    }),
+    addNotification: thunk(async (actions, payload, helpers) => {
+        await Axios.post('/notifications', {notification: 'created'})
+        await Axios.post('/notifications/distribute', {jobs: 'manager'})
     })
 })

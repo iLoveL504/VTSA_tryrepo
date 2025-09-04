@@ -76,9 +76,11 @@ const Login = ({setRoles}) => {
                 console.log('hi')
                 if(result.status === 200){
                   const token = jwtDecode(result.data.accessToken)
-                  const { username, roles } = token.UserInfo
+                  console.log(token)
+                  const { username, roles, id } = token.UserInfo
                   sessionStorage.setItem("username", username)
                   sessionStorage.setItem("roles", roles)
+                  sessionStorage.setItem("id", id)
                   console.log(roles)
                   setAuthUser({username: user, roles: result.data.roles})
                   navigate('/dashboard')

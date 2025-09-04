@@ -6,7 +6,7 @@ import { useStoreState, useStoreActions } from 'easy-peasy'
 // Default values shown
 
 import {Axios} from '../../api/axios'
-import EmployeeList from '../../components/EmployeeComponents/EmployeeList'
+import EmployeeList from '../../components/Employee/EmployeeList'
 
 const Technician = () => {
     // const [ searchEmployee, setSearchEmployee ] = useState('')
@@ -25,12 +25,10 @@ const Technician = () => {
 
     const sortedSearch = useStoreState((state) => state.sortResults)
     useEffect(() => {
-        console.log('hhh')
         setSearchResults(employees)
     }, [])
 
     useEffect(() => {
-        console.log(searchResults)
         setSearchResults(sortedSearch)
     }, [searchEmployee])
 

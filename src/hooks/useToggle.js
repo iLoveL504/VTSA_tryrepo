@@ -4,7 +4,6 @@ const useToggle = () => {
     const [ toggle, setToggle ] = useState(true)
     const invertToggle = () => {
         setToggle(prev => !prev)
-        console.log(toggle)
     }
     return [ toggle, invertToggle ]
 }

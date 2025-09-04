@@ -18,29 +18,38 @@ import { useAuth } from './hooks/useAuth'
 import useAxiosFetch from './hooks/useAxiosFetch'
 import store from './app/store.js'
 import AssignTeam from './Pages/AssignTeam.jsx'
-import ScheduleProject from './Pages/ScheduleProject.jsx'
+import test from './Pages/test.jsx'
+import QAQC_Checklist from './Pages/Documents/QAQC_Checklist.jsx'
 import { useStoreState, useStoreActions } from 'easy-peasy'
+import ScheduleProjects from './Pages/ScheduleProject.jsx'
+import ProgressReport from './Pages/ProgressReport.jsx'
 
 function App() {
-  const [ roles, setRoles ] = useAuth()
   const [ empData, empFetchError, empIsLoading ] = useAxiosFetch('http://localhost:4000/employees')
   const [ projData, projFetchError, projIsLoading ] = useAxiosFetch('http://localhost:4000/projects')
+  const [ notifData, notifFetchError, notifIsLoading ] = useAxiosFetch(`http://localhost:4000/notifications/${sessionStorage.getItem('id')}`)
 
   const setEmployees = useStoreActions(actions => actions.setEmployees)
   const setProjects = useStoreActions(actions => actions.setProjects)
   const setUser = useStoreActions(actions => actions.setUser)
+  const setNotifications = useStoreActions(actions => actions.setNotifications)
 
+  const emps = useStoreState(state => state.employees)
   useEffect(() => {
     setUser({ username: sessionStorage.getItem('username'), roles: sessionStorage.getItem('roles') })
   }, [])
 
-  useEffect(() => {
-    setEmployees(empData)
-  }, [empData])
+useEffect(() => {
+  if (empData) setEmployees(empData)
+}, [empData])
 
-  useEffect(() => {
-    setProjects(projData)
-  }, [projData])
+useEffect(() => {
+  if (projData) setProjects(projData)
+}, [projData])
+
+useEffect(() => {
+  if (notifData) setNotifications(notifData)
+}, [notifData])
   const location = useLocation()
   return (
       <Routes>
@@ -52,18 +61,23 @@ function App() {
           <Route path="technician">
             <Route index element={<Technician />} /> 
             <Route path=":empId" element={<TechnicianInfo />} />
+
           </Route>
 
           <Route path="projects">
             <Route index element={<Projects />} />
+            
             <Route path="create" element={<CreateProject />} />
-            <Route path="schedule" element={<ScheduleProject />} />
+            <Route path="schedule" element={<ScheduleProjects />} />
             <Route path=":projId" element={<ProjectInfo />} />
-            <Route path="team" element={<AssignTeam />} />
+            <Route path=":projId/team" element={<AssignTeam />} />
+            <Route path="qaqc" element={<QAQC_Checklist />} />
+            <Route path="progress" element={<ProgressReport />} />
           </Route>
 
           <Route path="PMS">
             <Route index element={<PMS />} />
+            
           </Route>
 
           <Route path="teams" element={<Teams />} />

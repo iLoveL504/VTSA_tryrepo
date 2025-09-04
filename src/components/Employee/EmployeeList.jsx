@@ -10,7 +10,6 @@ const EmployeeList = ({ employees, isLoading }) => {
         setTimeout(
             () => {
                 isLoad(false)
-                console.log('dddd')
             }, 1000
         )
     }, [])
@@ -18,13 +17,6 @@ const EmployeeList = ({ employees, isLoading }) => {
         <>  
                
             {
-                load ? (
-                    <Grid
-                        size="60"
-                        speed="1.5"
-                        color="rgba(84, 176, 210, 1)" 
-                    />
-                        ) :
                 employees.map(employee => (
                     <Employee employee={employee} key={employee.employee_id}/>
                 ))

@@ -4,15 +4,16 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { useNavigate } from 'react-router-dom'
 
 const Project = ({project}) => {
-
   const navigate = useNavigate()
-
+  const handleClick = async () => {
+    navigate(`/projects/${project.id}`)
+  }
   return (
-    <div className='ProjectInfo' onClick={() => navigate(`/projects/${project.id}`)}>
+    <div className='ProjectInfo' onClick={handleClick}>
       {project.lift_name}
       <p>{project.created_at}</p>
-      <p>{project.progress}%</p>
         <Box sx={{ width: '100%' }}>
+          <p>{project.progress}%</p>
           <LinearProgress variant="determinate" value={project.progress} />          
         </Box>
       <p className={`status-${project.status === 'active' ? 'active' : 

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IoMdMenu } from "react-icons/io"
 import { CgProfile } from "react-icons/cg"
 import { IoIosNotifications } from "react-icons/io";
@@ -6,14 +6,23 @@ import useToggle from '../../hooks/useToggle';
 import { Grid } from 'ldrs/react'
 import 'ldrs/react/Grid.css'
 import { useStoreState } from 'easy-peasy'
+import NotificationList from '../Notifications/NotificationList.jsx'
+import { Axios } from '../../api/axios.js'
 
 const NavBar = ({ invertMenuToggle }) => {
   const user = useStoreState(state => state.user)
+  const notifications = useStoreState(state => state.notifications)
   const [notifToggle, invertNotifToggle] = useToggle();
-  const [notifs, setNotifs] = useState(0);
-  const handleNotif = () => {
-    setNotifs(prev => prev + 1);
+  const [notifs, setNotifs] = useState([]);
+  useEffect(() => {
+    setNotifs(notifications)
+  }, [])
+
+  const handleClick = async() => {
+    const results = await Axios.get('/teams/no-team')
+    console.log(results)
   }
+
   return (
     <nav>
       <div onClick={() => invertMenuToggle() } className="Menu-icon">
@@ -22,45 +31,10 @@ const NavBar = ({ invertMenuToggle }) => {
       <div onClick={() => invertNotifToggle()} className="Notification-Icon">
         <IoIosNotifications className="BellIcon" size={30} style={{ color: 'white' }}/>
         
-        {notifs !== 0 && <div className="Notifications">{notifs}</div>}
+        {notifs !== 0 && <div className="Notifications">{notifications.length}</div>}
         <div className={`NotificationList ${notifToggle ? ' Hidden' : ''}`}>
           <div>
-           
-              <ul>
-                <li>
-                  <h4>New Problem!</h4>
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur reiciendis </p>
-                </li>
-                <li>
-                  <h4>New Problem!</h4>
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur reiciendis </p>
-                </li>
-                <li>
-                  <h4>New Problem!</h4>
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur reiciendis </p>
-                </li>
-                <li>
-                  <h4>New Problem!</h4>
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur reiciendis </p>
-                </li>
-                <li>
-                  <h4>New Problem!</h4>
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur reiciendis </p>
-                </li>
-                <li>
-                  <h4>New Problem!</h4>
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur reiciendis </p>
-                </li>
-                <li>
-                  <h4>New Problem!</h4>
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur reiciendis </p>
-                </li>
-                <li>
-                  <h4>New Problem!</h4>
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur reiciendis </p>
-                </li>
-              </ul>
-            
+            <NotificationList />
           </div>
         </div>
 

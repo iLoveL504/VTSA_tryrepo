@@ -1,5 +1,5 @@
-import AdminMenu from "../MenuList/AdminMenu";
-import TechnicianMenu from "../MenuList/TechnicianMenu";
+import AdminMenu from "../Menu/AdminMenu";
+import TechnicianMenu from "../Menu/TechnicianMenu";
 import { useStoreState } from "easy-peasy";
 
 const MenuBar = ({ menuToggle }) => {

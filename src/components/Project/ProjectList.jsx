@@ -4,8 +4,6 @@ import { useStoreState } from 'easy-peasy'
 
 const ProjectList = ({projects}) => {
   const user = useStoreState(state => state.user)
-  console.log(user)
-  console.log('glaing sa projectlist')
   return (
     <div className='ProjectList'>  
         {

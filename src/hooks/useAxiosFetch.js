@@ -4,15 +4,17 @@ import axios from 'axios'
 const useAxiosFetch = (dataUrl) => {
     const [data, setData] = useState([])
     const [fetchError, setFetchError] = useState(null)
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     
     useEffect(() => {
+        if (!dataUrl) return
+
         let isMounted = true
         const controller = new AbortController()
         const fetchData = async(url) => {
             setIsLoading(true)
             try{
-                const response = await axios.get(url,{
+                const response = await axios.get(dataUrl,{
                     signal: controller.signal
                 })
                 if(isMounted){
@@ -26,11 +28,10 @@ const useAxiosFetch = (dataUrl) => {
                 }
             }
             finally{
-                isMounted && setTimeout(() => setIsLoading(false), 2000)
+                isMounted && setTimeout(() => setIsLoading(false))
             }
         }
         fetchData(dataUrl)
-        console.log(data)
         const cleanUp = () => {
             console.log('cleanup function')
             isMounted = false
