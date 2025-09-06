@@ -31,7 +31,7 @@ const TechnicianMenu = () => {
             </li>
         </ul>
 
-        <div className="Logout"><span><BiSolidLogOut /></span>Log Out</div>
+        <div className="Logout" onClick={() => navigate('/login')}><span><BiSolidLogOut /></span>Log Out</div>
     </>
   )
 }

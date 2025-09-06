@@ -170,7 +170,6 @@ const Dashboard = () => {
       <button className="new-project-button" onClick={handleNewProject}>
         <span>+</span> New Project
       </button>
-      <MyGanttComponent />
     </div>
   );
 };

@@ -1,14 +1,36 @@
 import { Gantt} from "wx-react-gantt";
 import "wx-react-gantt/dist/gantt.css";
-import { React, useRef, useEffect} from "react";
+import { React, useRef, useEffect, useState} from "react";
 import { Willow } from "wx-react-gantt";
-import { tasks } from "./GanttData.jsx";
+import ProjectTasks from "./GanttData.jsx";
 import { columns, links, scales, taskTypes } from "./ganttComponents.jsx";
+import useAxiosFetch from '../../hooks/useAxiosFetch.js'
 
-const MyGanttComponent = () => {
+const MyGanttComponent = ({id}) => {
+  const [projInfo, projFetchError, projIsLoading] = useAxiosFetch(`http://localhost:4000/projects/${id}`)
+  const [tasks, setTasks] = useState([])
   const apiRef = useRef();
   const scaleHeightRef = useRef(50);
-
+  const findTask = tasks.find(t => t.text === "Unloading of elevator equipments")
+  function toMySQLDate(input) {
+    const [day, month, year] = input.split("/");
+    return `${year}-${month}-${day}`;
+  }
+  const allDates = tasks.map(t => {
+      const date = new Date(t.start)
+      return toMySQLDate(date.toLocaleDateString("en-GB"))
+  })
+  
+  useEffect(() => {
+    if (!projIsLoading){
+      const d1 = new Date(projInfo.created_at)
+      console.log(toMySQLDate(d1.toLocaleDateString("en-GB")))
+      const project = new ProjectTasks(d1)
+      console.log(project.tasks)
+      setTasks(project.tasks)
+    }
+  }, [projInfo])
+  // console.log(allDates)
   /* Makes the "summary" task type not draggable */
   useEffect(() => {
     if (apiRef.current) {
@@ -43,6 +65,7 @@ const MyGanttComponent = () => {
           taskTypes={taskTypes} 
           init={(api) => (apiRef.current = api)}
           zoom
+          id={id}
         />
       </Willow>
     </div>  

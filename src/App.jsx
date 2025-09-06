@@ -68,7 +68,7 @@ useEffect(() => {
             <Route index element={<Projects />} />
             
             <Route path="create" element={<CreateProject />} />
-            <Route path="schedule" element={<ScheduleProjects />} />
+            <Route path=":projId/schedule" element={<ScheduleProjects />} />
             <Route path=":projId" element={<ProjectInfo />} />
             <Route path=":projId/team" element={<AssignTeam />} />
             <Route path="qaqc" element={<QAQC_Checklist />} />

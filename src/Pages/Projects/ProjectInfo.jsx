@@ -18,7 +18,7 @@ const ProjectInfo = () => {
     const [isEditing, setIsEditing] = useState(false)
     const [formData, setFormData] = useState({})
     const isProjectsReady = Array.isArray(projects) && projects.length > 0;
-    const fetchUrl = proj && isProjectsReady ? `http://localhost:4000/teams/${proj.team_id}` : null;
+    const fetchUrl = proj && isProjectsReady ? `http://localhost:4000/teams/${proj.id}` : null;
     const [teamInfo, teamFetchError, teamIsLoading] = useAxiosFetch(fetchUrl);
 
     const team = teamInfo && teamInfo.length > 0 ? teamInfo[0] : null;
@@ -26,10 +26,11 @@ const ProjectInfo = () => {
 
     useEffect(() => {
         if (proj !== undefined) {
+            console.log(teamInfo)
             setFormData(proj)
             setIsLoading(false)
         }
-    }, [proj, formData])
+    }, [proj, formData, teamInfo])
 
     const validate = (values) => {
         let errors = {}
@@ -88,6 +89,9 @@ const ProjectInfo = () => {
         }
     }
 
+    const schedOnClick = () => {
+        navigate('schedule')
+    }
 
     const handleCancel = () => {
         setValues(proj)
@@ -97,7 +101,7 @@ const ProjectInfo = () => {
     }
 
 
-    if (isLoading) {
+    if (isLoading || teamIsLoading) {
         return (
             <div className="Content ProjectPage">
                 <div className="Loading">
@@ -115,6 +119,7 @@ const ProjectInfo = () => {
             <div className="project-header">
                 <h2>Project Details</h2>
                 <div className="action-buttons">
+                    <button onClick={schedOnClick}>Scheudle</button>
                     {!isEditing ? (
                         <button onClick={() => setIsEditing(true)}>Edit</button>
                     ) : (
@@ -135,6 +140,7 @@ const ProjectInfo = () => {
                 <div className="form-section">
                     <h3>Basic Information</h3>
                     <div className="form-row">
+                        <label>Project ID: {values.id}</label>
                         <label>Lift Name:</label>
                         <input
                             type="text"
@@ -249,21 +255,21 @@ const ProjectInfo = () => {
                     ) : (
                         <>
                             <div className="form-row">
-                                <label>Team Name:</label>
-                                <span>{teamInfo[0][0].team_name}</span>
+                                <label>Foreman:</label>
+                                <span>{teamInfo[0].Foreman}</span>
                             </div>
                             <div className="form-row">
                                 {console.log(teamInfo[0])}
                                 <label>Team Members:</label>
                                 <div className="team-members">
-                                    {teamInfo[0].map((member, index) => (
+                                    {teamInfo.map((member, index) => (
                                         <span key={index} className="member-tag"
                                          onClick={
                                             () => navigate(`/technician/${member.employee_id}`)
                                          }
                                          style={{'cursor': 'pointer'}}
                                          >
-                                            {member.username}
+                                            {member.full_name}
                                         </span>
                                     ))}
                                 </div>

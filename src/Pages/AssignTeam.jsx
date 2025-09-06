@@ -1,316 +1,156 @@
 import React, { useState, useEffect } from 'react';
-import { useStoreState } from 'easy-peasy'
-import { Grid } from 'ldrs/react'
-import { useParams } from 'react-router-dom'
-import { Axios } from '../api/axios.js'
-import useAxiosFetch from '../hooks/useAxiosFetch.js'
+import { useStoreState } from 'easy-peasy';
+import { useParams } from 'react-router-dom';
+import { Axios } from '../api/axios.js';
+import useAxiosFetch from '../hooks/useAxiosFetch.js';
 import 'ldrs/react/Grid.css'
 
-
 const AssignTeam = () => {
-  const { projId } = useParams()
-  const projects = useStoreState(state => state.projects)
-  const foundProject = projects.find(p => p.id === Number(projId))
-  const [availableInfo, availableFetchError, availableIsLoading] = useAxiosFetch('http://localhost:4000/teams/no-team')
- 
-  // Sample list of available technicians
-  const [isLoading, setIsLoading] = useState(true)
-  const [availableTechs, setAvailableTechs] = useState();
-  const [forecastedAvailable, setForecastedAvailable] = useState()
-  const [team, setTeam] = useState([]);
+  const { projId } = useParams();
+  const projects = useStoreState(state => state.projects);
+  const foundProject = projects.find(p => p.id === Number(projId));
+  const [availableTeams, availableFetchError, availableIsLoading] = useAxiosFetch('http://localhost:4000/teams/no-project');
+  const [selectedTeam, setSelectedTeam] = useState(null);
   const [error, setError] = useState('');
 
-  //filter employees
-  const[filter, setFilter] = useState('')
-  const [techView, setTechView] = useState('available'); // 'available' or 'forecasted'
-
-  //loading useEffect
-  useEffect (() => {
-    console.log(availableInfo)
-    if(foundProject !== undefined && !availableIsLoading){
-      const filteredEmp = availableInfo.filter(e => e.job !== 'manager' && e.job !== 'Project Manager')
-      const memp = filteredEmp.map(e => ({...e, assigned: false, forecasted: false}))
-      console.log(availableIsLoading)
-      const dateOnly = new Date(foundProject.manufacturing_end_date).toISOString().split("T")[0];
-      
-      const fetchData = async () => {
-        const res = await Axios.post('/teams/forecast-team',{
-          manufacturing_end_date: '2025-10-14'
-        })
-        const femp = res.data.map(e => ({...e, assigned: false, forecasted: true}))
-        setForecastedAvailable(femp)
-        setIsLoading(false)
+  // Group team members by team
+  const groupTeams = (data) => {
+    const teams = {};
+    
+    data.forEach(member => {
+      if (!teams[member.team_id]) {
+        teams[member.team_id] = {
+          team_id: member.team_id,
+          foreman_name: member.Foreman,
+          foreman_id: member.foreman_id,
+          project_id: member.project_id,
+          members: []
+        };
       }
-      fetchData()
-      setAvailableTechs(memp)
       
-    }
-  }, [availableInfo ,projects, foundProject])
+      // Add member to the team (including the foreman)
+      teams[member.team_id].members.push({
+        employee_id: member.employee_id,
+        full_name: member.full_name,
+        job: member.job,
+        username: member.username
+      });
+    });
+    console.log(teams)
+    return Object.values(teams);
 
-
-
-
-  const assignTech = (tech) => {
-    console.log(tech.forecasted)
-    console.log()
-    if (team.length >= 6) {
-      setError('Team is already full (6 members max)');
-      return;
-    }
-
-    // Check if adding would exceed job limits
-    if (tech.job === 'Project Engineer' && 
-        team.filter(m => m.job === 'Project Engineer').length >= 1) {
-      setError('Maximum 1 Project Engineer allowed');
-      return;
-    }
-
-    if (tech.job === 'Foreman' && 
-        team.filter(m => m.job === 'Foreman').length >= 2) {
-      setError('Maximum 2 Foremen allowed');
-      return;
-    }
-    if(tech.forecasted === false){
-      setAvailableTechs(availableTechs.map(t => 
-        t.employee_id === tech.employee_id ? {...t, assigned: true} : t
-      ));
-    }
-    if(tech.forecasted === true){
-      setForecastedAvailable(forecastedAvailable.map(t => 
-        t.employee_id === tech.employee_id ? {...t, assigned: true} : t
-      ));
-    }
-    setTeam([...team, tech]);
-    setError('');
   };
 
-  const removeTech = (tech) => {
-    if(tech.forecasted === false) {
-      setAvailableTechs(availableTechs.map(t => 
-        t.employee_id === tech.employee_id ? {...t, assigned: false} : t
-      ));
-    }
-    if(tech.forecasted === true) {
-      setForecastedAvailable(forecastedAvailable.map(t => 
-        t.employee_id === tech.employee_id ? {...t, assigned: false} : t
-      ));
-    }
-    setTeam(team.filter(m => m.employee_id !== tech.employee_id));
-    setError('');
-  };
+  const [teams, setTeams] = useState([]);
 
-  const validateTeam = () => {
-    const hasEngineer = team.some(m => m.job === 'Project Engineer');
-    const hasForeman = team.some(m => m.job === 'Foreman');
-    
-    if (!hasEngineer || !hasForeman) {
-      setError('Team must include at least 1 Project Engineer and 1 Foreman');
-      return false;
+  useEffect(() => {
+    if (availableTeams && availableTeams.length > 0) {
+      const groupedTeams = groupTeams(availableTeams);
+      setTeams(groupedTeams);
     }
-    
-    if (team.length !== 6) {
-      setError('Team must have exactly 6 members');
-      return false;
-    }
-    
+  }, [availableTeams]);
+
+  const handleTeamSelect = (team) => {
+    setSelectedTeam(team);
     setError('');
-    return true;
   };
 
   const handleSubmit = () => {
-    if (validateTeam()) {
-      alert('Team successfully assigned!');
+    if (!selectedTeam) {
+      setError('Please select a team');
+      return;
     }
+    
+    // Submit the selected team to the project
+    alert(`Team ${selectedTeam.foreman_name} assigned to project ${foundProject.lift_name}`);
+    // Here you would make an API call to assign the team to the project
   };
 
-  const handleSelect = (e) => {
-    setFilter(e.target.value)
-  }
-
-  const toggleTechView = () => {
-    setTechView(techView === 'available' ? 'forecasted' : 'available');
-  };
-
-  if(isLoading){
+  if (availableIsLoading) {
     return (
-            <div className="Content ProjectPage">
-                <div className="Loading">
-                    <p>Data is Loading...</p>
-                    <Grid size="60" speed="1.5" color="rgba(84, 176, 210, 1)" />
-                </div>
-            </div>
-        )
+      <div className="Content ProjectPage">
+        <div className="Loading">
+          <p>Loading available teams...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className='Content AssignTeam'>
-      {console.log(availableTechs)}
-      <h2>Assign Team Members for {foundProject.lift_name}</h2>
+    <div className="Content TeamSelection">
+      <h2>Assign Team to {foundProject.lift_name}</h2>
       <p className="instructions">
-        Build a 6-person team with at least 1 Project Engineer and 1 Foreman
+        Select a team by clicking on the foreman's name. The team members will be displayed below.
       </p>
-           
-      <div className="team-builder">
-        <div className="available-techs">
-          <div className="tech-view-toggle">
-            <h3>
-              {techView === 'available' ? 'Available Technicians' : 'Forecasted Technicians'}
-            </h3>
-            <label className="switch">
-              <input 
-                type="checkbox" 
-                checked={techView === 'forecasted'}
-                onChange={toggleTechView}
-              />
-              <span className="slider round"></span>
-            </label>
-          </div>
-          <input 
-            type="radio" 
-            id="ProjectEngineer" 
-            name="Filter"
-            value="Project Engineer" 
-            onChange={handleSelect}
-          />
-          <label htmlFor="ProjectEngineer">Project Engineer</label>
-          <input 
-            type="radio" 
-            id="Foreman"
-            name="Filter" 
-            value="Foreman" 
-            onChange={handleSelect}
-          />
-          <label htmlFor="Foreman">Foreman</label>
-          <input 
-            type="radio" 
-            id="Technician"
-            name="Filter" 
-            value="Technician" 
-            onChange={handleSelect}
-          />
-          <label htmlFor="Technician">Technician</label>
-          <input 
-            type="radio" 
-            id="All"
-            name="Filter" 
-            value="" 
-            onChange={handleSelect}
-          />
-          <label htmlFor="All">All</label>
-          
-          {isLoading ? (
-            <Grid size="60" speed="1.5" color="rgba(84, 176, 210, 1)" />
-          ) : (
-            <table className="tech-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Job</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  techView === 'available' ? 
-                  availableTechs
-                  .filter(t => 
-                    {
-                      return(
-                      filter ? !t.assigned && t.job === filter :
-                      !t.assigned)
-                    })
-                  .map(tech => (
-                    <tr key={tech.employee_id}>
-                      <td>{tech.username}</td>
-                      <td className={`job ${tech.job.replace(' ', '-')}`}>
-                        {tech.job}
-                      </td>
-                      <td>
-                        <button onClick={() => assignTech(tech)}>➕ Add</button>
-                      </td>
-                    </tr>
-                  )) : (
-                    forecastedAvailable
-                    .filter(t => 
-                    {
-                      return(
-                      filter ? !t.assigned && t.job === filter :
-                      !t.assigned)
-                    })
-                    .map(tech => (
-                    <tr key={tech.employee_id}>
-                      <td>{tech.username}</td>
-                      <td className={`job ${tech.job.replace(' ', '-')}`}>
-                        {tech.job}
-                      </td>
-                      <td>
-                        <button onClick={() => assignTech(tech)}>➕ Add</button>
-                      </td>
-                    </tr>
-                  ))
-                  )
-                }
-               
-              </tbody>
-            </table>
-          )}
+      
+      {availableFetchError && (
+        <div className="error-message">Error loading teams: {availableFetchError}</div>
+      )}
+      
+      <div className="teams-container">
+        <h3>Available Teams</h3>
+        <div className="teams-list">
+          {teams.map(team => (
+            <div 
+              key={team.team_id} 
+              className={`team-card ${selectedTeam && selectedTeam.team_id === team.team_id ? 'selected' : ''}`}
+              onClick={() => handleTeamSelect(team)}
+            >
+              <div className="foreman-info">
+                <h4>{team.foreman_name}</h4>
+                <span className="job-tag foreman">Foreman</span>
+                <span className="team-size">{team.members.length} members</span>
+              </div>
+              
+              <div className="team-members">
+                <h5>Team Members:</h5>
+                <ul>
+                  {team.members.map(member => (
+                    <li key={member.employee_id} className="member-item">
+                      <span className="member-name">{member.full_name}</span>
+                      <span className={`job-tag ${member.job.replace(' ', '-').toLowerCase()}`}>
+                        {member.job}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))}
         </div>
-
-        <div className="current-team">
-          <h3>Current Team ({team.length}/6)</h3>
-          {team.length === 0 ? (
-            <p className="empty-team">No members assigned yet</p>
-          ) : (
-            <table className="tech-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Job</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {team.map(tech => (
-                  <tr key={tech.employee_id}>
-                    <td>{tech.username}</td>
-                    <td className={`job ${tech.job.replace(' ', '-')}`}>
-                      {tech.job}
-                    </td>
-                    <td>
-                      <button onClick={() => removeTech(tech)}>❌ Remove</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-
-          <div className="job-counts">
-            <div className="count">
-              <span>Project Engineers:</span>
-              <span>{team.filter(m => m.job === 'Project Engineer').length}</span>
-            </div>
-            <div className="count">
-              <span>Foremen:</span>
-              <span>{team.filter(m => m.job === 'Foreman').length}</span>
-            </div>
-            <div className="count">
-              <span>Technicians:</span>
-              <span>{team.filter(m => m.job === 'Technician').length}</span>
-            </div>
-          </div>
-        </div>
-
       </div>
+      
+      {selectedTeam && (
+        <div className="selected-team">
+          <h3>Selected Team</h3>
+          <div className="selected-team-card">
+            <h4>{selectedTeam.foreman_name}'s Team</h4>
+            <div className="team-composition">
+              <div className="composition-item">
+                <span className="count">{selectedTeam.members.filter(m => m.job === 'Foreman').length}</span>
+                <span className="label">Foremen</span>
+              </div>
+              <div className="composition-item">
+                <span className="count">{selectedTeam.members.filter(m => m.job === 'Project Engineer').length}</span>
+                <span className="label">Engineers</span>
+              </div>
+              <div className="composition-item">
+                <span className="count">{selectedTeam.members.filter(m => m.job === 'Technician').length}</span>
+                <span className="label">Technicians</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       {error && <div className="error-message">{error}</div>}
       
       <button 
         className="submit-btn" 
         onClick={handleSubmit}
-        disabled={team.length !== 6}
+        disabled={!selectedTeam}
       >
-        Assign Team
+        Assign Selected Team
       </button>
     </div>
   );
