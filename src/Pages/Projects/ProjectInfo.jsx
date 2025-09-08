@@ -7,7 +7,7 @@ import 'ldrs/react/Grid.css'
 import { useNavigate } from 'react-router-dom' 
 import { Axios } from '../../api/axios.js'
 import useFormValidate from '../../hooks/useFormValidate'
-import MyGanttComponent from '../../outComponent/GANTT_CHART/GanttChart.jsx'
+import useFindProjectTask from '../../utils/FindProjectTask.js'
 import "wx-react-gantt/dist/gantt.css";
 import "../../gantt-custom.css"
 
@@ -17,9 +17,11 @@ const ProjectInfo = () => {
     const numId = Number(projId)
     const projects = useStoreState(state => state.projects)
     const proj = projects.find(p => p.id === numId)
+    const dateNow = useStoreState(state => state.date)
     const [isLoading, setIsLoading] = useState(true)
     const [isEditing, setIsEditing] = useState(false)
     const [formData, setFormData] = useState({})
+    const [currentTask, tasksFetchError, tasksIsLoading] = useFindProjectTask(dateNow, projId)
     const isProjectsReady = Array.isArray(projects) && projects.length > 0;
     const fetchUrl = proj && isProjectsReady ? `http://localhost:4000/teams/${proj.id}` : null;
     const [teamInfo, teamFetchError, teamIsLoading] = useAxiosFetch(fetchUrl);
@@ -29,7 +31,6 @@ const ProjectInfo = () => {
 
     useEffect(() => {
         if (proj !== undefined) {
-            console.log(teamInfo)
             setFormData(proj)
             setIsLoading(false)
         }
@@ -103,8 +104,15 @@ const ProjectInfo = () => {
         setSaveStatus('')
     }
 
+    const progressOnClick = () => {
+        console.log(typeof dateNow)
+        console.log(currentTask)
+        
+        // navigate(`progress`)
+    }
 
-    if (isLoading || teamIsLoading) {
+
+    if (isLoading || teamIsLoading || tasksIsLoading) {
         return (
             <div className="Content ProjectPage">
                 <div className="Loading">
@@ -118,11 +126,11 @@ const ProjectInfo = () => {
     return (
         
         <div className="Content ProjectPage">
-            {console.log(proj)}
             <div className="project-header">
                 <h2>Project Details</h2>
                 <div className="action-buttons">
                     <button onClick={schedOnClick}>Scheudle</button>
+                    <button onClick={progressOnClick}>Progress</button>
                     {!isEditing ? (
                         <button onClick={() => setIsEditing(true)}>Edit</button>
                     ) : (
@@ -138,6 +146,22 @@ const ProjectInfo = () => {
 
             {saveStatus === 'success' && <div className="status success">Project updated successfully!</div>}
             {saveStatus === 'error' && <div className="status error">Error updating project</div>}
+             <div className="form-section current-task-section">
+                <h3>Current Task</h3>
+                {currentTask ? (
+                    <div className="current-task-card">
+                        <div className="task-name">{currentTask.name}</div>
+                        <div className="task-date">
+                            Scheduled: {currentTask.date}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="current-task-card">
+                        <div className="task-name">No current tasks scheduled</div>
+                        <div className="task-date">All tasks are completed or not scheduled yet</div>
+                    </div>
+                )}
+            </div>
 
             <div className="project-form">
                 <div className="form-section">
@@ -262,7 +286,6 @@ const ProjectInfo = () => {
                                 <span>{teamInfo[0].Foreman}</span>
                             </div>
                             <div className="form-row">
-                                {console.log(teamInfo[0])}
                                 <label>Team Members:</label>
                                 <div className="team-members">
                                     {teamInfo.map((member, index) => (
@@ -311,10 +334,6 @@ const ProjectInfo = () => {
                             />
                         </div>
                     </div>
-                </div>
-
-                <div className="form-section">
-                    <MyGanttComponent id={projId} setPayload={setPayload}/>
                 </div>
             </div>
         </div>

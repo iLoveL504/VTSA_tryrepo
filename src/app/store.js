@@ -1,7 +1,10 @@
 import { createStore, action, thunk, computed } from "easy-peasy"
 import {Axios} from '../api/axios.js'
+const d = new Date()
+const date = d.toISOString().split('T')[0]
 
 export default createStore({
+    date: date,
     user: { username: null, roles: null },
     setUser: action((state, payload) => {
         state.user.username = payload.username

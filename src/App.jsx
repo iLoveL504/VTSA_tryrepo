@@ -23,13 +23,12 @@ import test from './Pages/test.jsx'
 import QAQC_Checklist from './Pages/Documents/QAQC_Checklist.jsx'
 import { useStoreState, useStoreActions } from 'easy-peasy'
 import ScheduleProjects from './Pages/ScheduleProject.jsx'
-import ProgressReport from './Pages/ProgressReport.jsx'
 
 function App() {
   const [ empData, empFetchError, empIsLoading ] = useAxiosFetch('http://localhost:4000/employees')
   const [ projData, projFetchError, projIsLoading ] = useAxiosFetch('http://localhost:4000/projects')
   const [ notifData, notifFetchError, notifIsLoading ] = useAxiosFetch(`http://localhost:4000/notifications/${sessionStorage.getItem('id')}`)
-
+  const dateNow = useStoreState(state => state.date)
   const setEmployees = useStoreActions(actions => actions.setEmployees)
   const setProjects = useStoreActions(actions => actions.setProjects)
   const setUser = useStoreActions(actions => actions.setUser)
@@ -38,6 +37,7 @@ function App() {
   const emps = useStoreState(state => state.employees)
   useEffect(() => {
     setUser({ username: sessionStorage.getItem('username'), roles: sessionStorage.getItem('roles') })
+    console.log(dateNow)
   }, [])
 
 useEffect(() => {

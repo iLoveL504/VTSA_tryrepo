@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
 @import url("https://cdn.syncfusion.com/ej2/bootstrap5.css");
+@import 'https://unpkg.com/@univerjs/preset-sheets-core/lib/index.css';
 
 *{
   margin: 0;
@@ -1276,6 +1277,60 @@ nav .Notifications {
   color: #ff4343;
 }
 
+.current-task-section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #54b0d2;
+}
+
+.current-task-card {
+    padding: 1rem;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.task-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.task-date {
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.task-status {
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.task-status.completed {
+    color: #28a745;
+}
+
+.task-status.pending {
+    color: #dc3545;
+}
+
+.update-task-btn {
+    background: #54b0d2;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.update-task-btn:hover {
+    background: #3a8fb0;
+}
+
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -2482,4 +2537,43 @@ nav .Notifications {
   .form-section.basic-info {
     grid-template-columns: 1fr;
   }
+}
+
+/* Add to your CSS file */
+.ProjectProgress .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.ProjectProgress .tabs {
+    display: flex;
+    gap: 10px;
+}
+
+.ProjectProgress .tabs button {
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    background: #f5f5f5;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.ProjectProgress .tabs button.active {
+    background: #54b0d2;
+    color: white;
+    border-color: #54b0d2;
+}
+
+.progress-content {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.accomplishment-report, .daily-tasks {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f9f9f9;
 }
