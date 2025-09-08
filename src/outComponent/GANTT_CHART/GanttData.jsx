@@ -1,3 +1,4 @@
+import { requestFormReset } from "react-dom";
 
 class ProjectTasks{
   
@@ -353,6 +354,18 @@ class ProjectTasks{
   ];
   }
   
+  buildPayload() {
+    function toMySQLDate(input) {
+      const [day, month, year] = input.split("/");
+      return `${year}-${month}-${day}`;
+    } 
+    const avoidValues = [600, 500, 16, 20, 24, 29, 34, 38]
+    const payload = this.tasks.filter(t => !avoidValues.includes(t.id)).map(t => {
+        const formattedDate = new Date(t.start)
+        return toMySQLDate(formattedDate.toLocaleDateString("en-GB"))
+    })
+    return payload
+  }
 
 }
 

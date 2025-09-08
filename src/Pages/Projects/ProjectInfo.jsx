@@ -7,6 +7,9 @@ import 'ldrs/react/Grid.css'
 import { useNavigate } from 'react-router-dom' 
 import { Axios } from '../../api/axios.js'
 import useFormValidate from '../../hooks/useFormValidate'
+import MyGanttComponent from '../../outComponent/GANTT_CHART/GanttChart.jsx'
+import "wx-react-gantt/dist/gantt.css";
+import "../../gantt-custom.css"
 
 const ProjectInfo = () => {
     const navigate = useNavigate()
@@ -20,7 +23,7 @@ const ProjectInfo = () => {
     const isProjectsReady = Array.isArray(projects) && projects.length > 0;
     const fetchUrl = proj && isProjectsReady ? `http://localhost:4000/teams/${proj.id}` : null;
     const [teamInfo, teamFetchError, teamIsLoading] = useAxiosFetch(fetchUrl);
-
+    const [payload, setPayload] = useState({})
     const team = teamInfo && teamInfo.length > 0 ? teamInfo[0] : null;
     const teamMembers = team ? team.members : null;
 
@@ -308,6 +311,10 @@ const ProjectInfo = () => {
                             />
                         </div>
                     </div>
+                </div>
+
+                <div className="form-section">
+                    <MyGanttComponent id={projId} setPayload={setPayload}/>
                 </div>
             </div>
         </div>

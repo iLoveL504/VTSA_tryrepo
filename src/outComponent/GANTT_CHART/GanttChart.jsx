@@ -6,7 +6,7 @@ import ProjectTasks from "./GanttData.jsx";
 import { columns, links, scales, taskTypes } from "./ganttComponents.jsx";
 import useAxiosFetch from '../../hooks/useAxiosFetch.js'
 
-const MyGanttComponent = ({id}) => {
+const MyGanttComponent = ({id, setPayload}) => {
   const [projInfo, projFetchError, projIsLoading] = useAxiosFetch(`http://localhost:4000/projects/${id}`)
   const [tasks, setTasks] = useState([])
   const apiRef = useRef();
@@ -26,7 +26,7 @@ const MyGanttComponent = ({id}) => {
       const d1 = new Date(projInfo.created_at)
       console.log(toMySQLDate(d1.toLocaleDateString("en-GB")))
       const project = new ProjectTasks(d1)
-      console.log(project.tasks)
+      setPayload({date: project.buildPayload()})
       setTasks(project.tasks)
     }
   }, [projInfo])

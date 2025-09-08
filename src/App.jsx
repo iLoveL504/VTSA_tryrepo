@@ -8,6 +8,7 @@ import Technician from './Pages/Technician/Technician.jsx'
 import TechnicianInfo from './Pages/Technician/TechnicianInfo.jsx'
 import Projects from './Pages/Projects/Projects'
 import ProjectInfo from './Pages/Projects/ProjectInfo.jsx'
+import ProjectProgress from './Pages/Projects/ProjectProgress.jsx'
 import PMS from './Pages/PMS'
 import Login from './Pages/Login'
 import Teams from './Pages/Teams'
@@ -72,7 +73,7 @@ useEffect(() => {
             <Route path=":projId" element={<ProjectInfo />} />
             <Route path=":projId/team" element={<AssignTeam />} />
             <Route path="qaqc" element={<QAQC_Checklist />} />
-            <Route path="progress" element={<ProgressReport />} />
+            <Route path=":projId/progress" element={<ProjectProgress />} />
           </Route>
 
           <Route path="PMS">

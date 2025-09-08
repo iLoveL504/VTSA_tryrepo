@@ -1,5 +1,5 @@
 import AdminMenu from "../Menu/AdminMenu";
-import TechnicianMenu from "../Menu/TechnicianMenu";
+import TechnicianMenu from "../Menu/ProjectEngineerMenu";
 import { useStoreState } from "easy-peasy";
 
 const MenuBar = ({ menuToggle }) => {
@@ -10,7 +10,7 @@ return (
     {
       user === "manager" ? <AdminMenu /> :
       user === "Project Manager" ? <AdminMenu /> :
-      user === "Project Engineer" ? <TechnicianMenu /> :
+      user === "Project Engineer" ? <ProjectEngineerMenu /> :
       user === "Foreman" ? <AdminMenu /> :
       user === "Installer" ? <AdminMenu /> :
       user === "PMS Manager" ? <AdminMenu /> :

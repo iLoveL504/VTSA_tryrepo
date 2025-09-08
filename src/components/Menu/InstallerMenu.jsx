@@ -8,32 +8,30 @@ import { useNavigate, Routes, Route } from 'react-router-dom';
 import { BiSolidLogOut } from "react-icons/bi"
 
 
-const TechnicianMenu = () => {
+const Installer = () => {
   const navigate = useNavigate()
   return (
     <>
         <ul>
+          <Link to="/dashboard">
             <li>
-              <MdDashboard style={{ color: 'white' }}/>
-              <a href="#" onClick={(e) => {
-                  e.preventDefault();
-                  navigate('/dashboard');
-                  console.log('navigate to dashboard')
-                }}>Dashboard</a>
+                <MdDashboard style={{ color: 'white' }}/>
+                Dashboard
             </li>
+          </Link>
+          <Link to="/projects">
             <li>
-              <IoPerson style={{ color: 'white' }}/>
-              <a href="">Technician</a>
+                <GoProjectRoadmap style={{ color: 'white' }}/>
+                Projects
             </li>
-            <li>
-              <MdHomeRepairService style={{ color: 'white' }}/>
-              <a href="">PMS</a>
-            </li>
+          </Link>
+ 
+          
         </ul>
 
         <div className="Logout" onClick={() => navigate('/login')}><span><BiSolidLogOut /></span>Log Out</div>
-    </>
+    </> 
   )
 }
 
-export default TechnicianMenu
+export default Installer
