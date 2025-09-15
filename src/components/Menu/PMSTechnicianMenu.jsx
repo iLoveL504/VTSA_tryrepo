@@ -9,6 +9,10 @@ import { BiSolidLogOut } from "react-icons/bi"
 
 const PMSTechnicianMenu = () => {
   const navigate = useNavigate()
+  const handleLogout = () => {
+    sessionStorage.clear()
+    navigate('/login')
+  }
   return (
     <>
         <ul>
@@ -46,7 +50,7 @@ const PMSTechnicianMenu = () => {
           
         </ul>
 
-        <div className="Logout" onClick={() => navigate('/login')}><span><BiSolidLogOut /></span>Log Out</div>
+        <div className="Logout" onClick={handleLogout}><span><BiSolidLogOut /></span>Log Out</div>
     </>      
   )
 }

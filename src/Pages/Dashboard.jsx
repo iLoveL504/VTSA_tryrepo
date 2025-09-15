@@ -8,7 +8,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const projects = useStoreState(state => state.projects);
   const employees = useStoreState(state => state.employees);
-  
+  const role = sessionStorage.getItem('roles')
   // Sample data for demonstration
   const [dashboardData] = useState({
     ongoingProjects: projects.filter(p => p.status === 'active').length || 4,
@@ -33,7 +33,11 @@ const Dashboard = () => {
 
   return (
     <div className="Content Dashboard">
-      <div className="dashboard-header">
+      {
+        role === 'manager' || role === 'Project Manager' 
+        ? (
+        <>
+          <div className="dashboard-header">
         <h1>Dashboard</h1>
         <p>Welcome back! Here's what's happening today.</p>
       </div>
@@ -170,6 +174,14 @@ const Dashboard = () => {
       <button className="new-project-button" onClick={handleNewProject}>
         <span>+</span> New Project
       </button>
+        </>
+      ) : (
+            <>
+              you see something else here because you are a {role}
+            </>
+          )
+      }
+      
     </div>
   );
 };

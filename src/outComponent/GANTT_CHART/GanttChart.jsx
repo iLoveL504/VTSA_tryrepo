@@ -6,7 +6,7 @@ import ProjectTasks from "./GanttData.jsx";
 import { columns, links, scales, taskTypes } from "./ganttComponents.jsx";
 import useAxiosFetch from '../../hooks/useAxiosFetch.js'
 
-const MyGanttComponent = ({id, setPayload}) => {
+const MyGanttComponent = ({id, setPayload, setManu}) => {
   const [projInfo, projFetchError, projIsLoading] = useAxiosFetch(`http://localhost:4000/projects/${id}`)
   const [tasks, setTasks] = useState([])
   const apiRef = useRef();
@@ -23,7 +23,11 @@ const MyGanttComponent = ({id, setPayload}) => {
   
   useEffect(() => {
     if (!projIsLoading){
-      const d1 = new Date(projInfo.created_at)
+      if (projInfo.manufacturing_end_date === null) {
+        setManu(true)
+        return
+      }
+      const d1 = new Date(projInfo.manufacturing_end_date)
       console.log(toMySQLDate(d1.toLocaleDateString("en-GB")))
       const project = new ProjectTasks(d1)
       setPayload({date: project.buildPayload()})

@@ -3,9 +3,19 @@ import { useAuth } from '../hooks/useAuth'
 import MenuBar from '../components/UI/MenuBar'
 import { Outlet } from 'react-router-dom'
 import NavBar from '../components/UI/NavBar'
+import { useNavigate } from 'react-router-dom'
 
 const Layout = () => {
+    const navigate = useNavigate()
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn")
+    console.log(isLoggedIn)
     const [menuToggle, invertMenuToggle] = useToggle()
+    if(!isLoggedIn) return (
+      <>
+        you are not logged in
+        <div>Kindly log in <a href="" onClick={() => {navigate('/login')}}>here</a></div>
+      </>
+    )
     return (
      <div>
         <NavBar invertMenuToggle={invertMenuToggle}/>

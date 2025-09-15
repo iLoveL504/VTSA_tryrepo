@@ -4,12 +4,16 @@ import { IoPerson } from "react-icons/io5"
 import { RiTeamFill } from "react-icons/ri"
 import { GoProjectRoadmap } from "react-icons/go";
 import { IoIosDocument } from "react-icons/io";
-import { useNavigate, Routes, Route } from 'react-router-dom';
+import { useNavigate, Routes, Route, Link } from 'react-router-dom';
 import { BiSolidLogOut } from "react-icons/bi"
 
 
 const ProjectEngineerMenu = () => {
   const navigate = useNavigate()
+  const handleLogout = () => {
+    sessionStorage.clear()
+    navigate('/login')
+  }
   return (
     <>
         <ul>
@@ -35,7 +39,7 @@ const ProjectEngineerMenu = () => {
           
         </ul>
 
-        <div className="Logout" onClick={() => navigate('/login')}><span><BiSolidLogOut /></span>Log Out</div>
+        <div className="Logout" onClick={handleLogout}><span><BiSolidLogOut /></span>Log Out</div>
     </> 
   )
 }

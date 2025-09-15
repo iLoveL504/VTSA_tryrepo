@@ -81,38 +81,78 @@ const usefindProjectTask = (dates, id) => {
     const [tasksFetchError, setTasksFetchError] = useState(null)
     const [tasksIsLoading, setTasksIsLoading] = useState(true)
     const [currentTask, setCurrentTask] = useState({})
+    const [allTaskDates, setAllTaskDates] = useState([])
 
     const [fetchedData, fetchError, isLoading] = useAxiosFetch(`http://localhost:4000/projects/schedule/${id}`)
 
     useEffect(() => {
         if (!isLoading) {
+            console.log(fetchError)
+            if(fetchError){
+                console.log('no schedule found')
+                setTasksFetchError(fetchError)
+                setTasksIsLoading(isLoading)
+                return
+            }
             setTasksInfo(fetchedData)
             setTasksFetchError(fetchError)
             setTasksIsLoading(false)
             const d2 = new Date(dateNow)
  
             console.log(fetchedData)
-
-            const dateFields = Object.entries(fetchedData[0])
-            .filter(([key]) => key.endsWith("date")) 
-            .map(([key, value]) => ({ key, value: new Date(value) }));
+            const zzz = Object.entries(fetchedData[0])
+            .filter(([key]) => key.endsWith("date") || key.endsWith("_end_date") || key.endsWith("_done")) 
+            console.log(zzz)
+            let correct = {}
+            for(let i = 0; i < zzz.length; i++){
+         
+                if(i !== zzz.length - 1 && i !== zzz.length - 2){
+                    correct[i] = {
+                        name: taskMap[zzz[i][0]], 
+                        date: new Date(zzz[i][1]),
+                        end_date: new Date(zzz[i + 1][1]),
+                        done: zzz[i+2][1]
+                    }
+                }
+            }
+            console.log(correct)
+            let dateFields = Object.entries(correct)
+            .filter((f, index) => index % 3 === 0)
+            .map((t, index) => t[1])
             console.log(dateFields)
+            setAllTaskDates(dateFields)
+            
+
+            // const dateFields = Object.entries(fetchedData[0])
+            // .filter(([key]) => key.endsWith("date") || key.endsWith("_end_date")) 
+            // .map(([key, value]) => ({ key, value: new Date(value) }));
+
+
             for (let i = 0; i < dateFields.length; i++) {
-                if (dateFields[i].value < d2) {
-                    if (i + 1 < dateFields.length && dateFields[i + 1].value > d2) {
-                    console.log(`Current task is ${dateFields[i].key}`);
+                if (dateFields[i].date < d2) {
+                    if (i + 1 < dateFields.length && dateFields[i + 1].date > d2) {
+                    console.log(dateFields[i]);
                     setCurrentTask({
-                        name: taskMap[dateFields[i].key],
-                        date: dateFields[i].value.toISOString().split("T")[0]
+                        name: dateFields[i].name,
+                        date: dateFields[i].date.toISOString().split("T")[0],
+                        end_date: dateFields[i].end_date.toISOString().split("T")[0],
+                        done: dateFields[i].done
                     });
                     return;
                     }
                 }
             }
         }
-    }, [isLoading, fetchedData, fetchError])
 
-    return [currentTask, tasksFetchError, tasksIsLoading]
+        
+    }, [isLoading, fetchedData, fetchError])
+    const findReverseTaskName = (name) => {
+            const rt = reverseTaskMap[name]
+            return rt
+        
+    }
+
+    return [currentTask, tasksFetchError, tasksIsLoading, allTaskDates, findReverseTaskName]
 }
 
 export default usefindProjectTask

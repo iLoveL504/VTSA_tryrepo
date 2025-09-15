@@ -1,8 +1,13 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Notification = ({n}) => {
-  return (
-     <li className="notification-item">
+  const navigate = useNavigate()
+  const handleClick = () => {
+    navigate(`/notification/${n.notification_id}`)
+  }
+  return ( 
+     <li className="notification-item" onClick={handleClick}>
       <div className="notification-content">
         <h4 className="notification-title">{n.subject}</h4>
         <p className="notification-message">{n.body}</p>

@@ -90,6 +90,7 @@ const CreateProject = () => {
     try {
       console.log(payload);
       await Axios.post("/projects", payload);
+      window.location.reload()
       navigate("/projects");
     } catch (err) {
       console.error("Error creating project:", err);

@@ -9,6 +9,7 @@ import TechnicianInfo from './Pages/Technician/TechnicianInfo.jsx'
 import Projects from './Pages/Projects/Projects'
 import ProjectInfo from './Pages/Projects/ProjectInfo.jsx'
 import ProjectProgress from './Pages/Projects/ProjectProgress.jsx'
+import ProjectReport from './Pages/Projects/ProjectReport.jsx'
 import PMS from './Pages/PMS'
 import Login from './Pages/Login'
 import Teams from './Pages/Teams'
@@ -22,9 +23,11 @@ import AssignTeam from './Pages/AssignTeam.jsx'
 import test from './Pages/test.jsx'
 import QAQC_Checklist from './Pages/Documents/QAQC_Checklist.jsx'
 import { useStoreState, useStoreActions } from 'easy-peasy'
-import ScheduleProjects from './Pages/ScheduleProject.jsx'
+import ScheduleProjects from './Pages/Projects/ScheduleProject.jsx'
+import NotificationPage from './Pages/NotificationPage.jsx'
 
 function App() {
+  console.log(sessionStorage.getItem("isLoggedIn"))
   const [ empData, empFetchError, empIsLoading ] = useAxiosFetch('http://localhost:4000/employees')
   const [ projData, projFetchError, projIsLoading ] = useAxiosFetch('http://localhost:4000/projects')
   const [ notifData, notifFetchError, notifIsLoading ] = useAxiosFetch(`http://localhost:4000/notifications/${sessionStorage.getItem('id')}`)
@@ -74,12 +77,20 @@ useEffect(() => {
             <Route path=":projId/team" element={<AssignTeam />} />
             <Route path="qaqc" element={<QAQC_Checklist />} />
             <Route path=":projId/progress" element={<ProjectProgress />} />
+            <Route path=":projId/report" element={<ProjectReport />} />
           </Route>
 
           <Route path="PMS">
             <Route index element={<PMS />} />
             
           </Route>
+
+          <Route path="notification">
+            <Route path=":notifId" element={<NotificationPage />} />
+            
+          </Route>
+
+
 
           <Route path="teams" element={<Teams />} />
           <Route path="baby-book" element={<BabyBook />} />

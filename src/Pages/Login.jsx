@@ -81,6 +81,7 @@ const Login = ({setRoles}) => {
                   sessionStorage.setItem("username", username)
                   sessionStorage.setItem("roles", roles)
                   sessionStorage.setItem("id", id)
+                  sessionStorage.setItem("isLoggedIn", true)
                   console.log(roles)
                   setAuthUser({username: user, roles: result.data.roles})
                   navigate('/dashboard')

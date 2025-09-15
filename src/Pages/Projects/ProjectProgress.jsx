@@ -3,19 +3,19 @@ import { useParams } from 'react-router-dom'
 import { useState } from 'react'
 import { useStoreState } from 'easy-peasy'
 import MyGanttComponent from '../../outComponent/GANTT_CHART/GanttChart.jsx'
+import DailyTasks from './DailyTasks.jsx'
 import UniverSpreadsheet from '../../spreadsheet-components/spreadsheet.jsx'
-// import DailyTasks from '../components/DailyTasks'
 import "wx-react-gantt/dist/gantt.css";
-import "../../gantt-custom.css"
 
-const ProjectProgress = () => {
+const ProjectProgress = ({ allTaskDates, tasksIsLoading}) => {
     const { projId } = useParams()
     const numId = Number(projId)
     const projects = useStoreState(state => state.projects)
     const proj = projects.find(p => p.id === numId)
     const [activeTab, setActiveTab] = useState('gantt')
     const [payload, setPayload] = useState({})
-
+    const [ manufacutringEndMissing, setManufacturingEndMissing ] = useState(false)
+    console.log(projId)
     if (!proj) {
         return <div>Project not found</div>
     }
@@ -45,10 +45,11 @@ const ProjectProgress = () => {
                     </button>
                 </div>
             </div>
+
             <div className="progress-content">
-                {activeTab === 'gantt' && <MyGanttComponent id={projId} setPayload={setPayload}/>}
+                {activeTab === 'gantt' && <MyGanttComponent id={projId} setPayload={setPayload} setManu={setManufacturingEndMissing} />}
                 {activeTab === 'accomplishment' && <UniverSpreadsheet />}
-                {activeTab === 'tasks' && <DailyTasks projectId={numId} />}
+                {activeTab === 'tasks' && <DailyTasks allTaskDates={allTaskDates} tasksIsLoading={tasksIsLoading}/>}
             </div>
         </div>
     )

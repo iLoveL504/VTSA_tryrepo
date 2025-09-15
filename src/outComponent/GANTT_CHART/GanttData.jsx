@@ -11,7 +11,7 @@ class ProjectTasks{
       text: "Mechanical Installation (Passenger Elevator)",
       type: "summary",
       parent: 0,
-      open: false,
+      open: true,
       start: this.offset(0),   // origin date = dateVariable
       duration: 45,
     },
@@ -290,7 +290,7 @@ class ProjectTasks{
       text: "Testing and Commissioning (Passenger Elevator)",
       type: "summary",
       parent: 0,
-      open: false,
+      open: true,
       start: this.offset(45),
       end: this.offset(60),
       duration: 15,
@@ -355,17 +355,70 @@ class ProjectTasks{
   }
   
   buildPayload() {
-    function toMySQLDate(input) {
-      const [day, month, year] = input.split("/");
+    function toMySQLDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
-    } 
-    const avoidValues = [600, 500, 16, 20, 24, 29, 34, 38]
-    const payload = this.tasks.filter(t => !avoidValues.includes(t.id)).map(t => {
-        const formattedDate = new Date(t.start)
-        return toMySQLDate(formattedDate.toLocaleDateString("en-GB"))
-    })
-    return payload
+    }
+
+    const avoidValues = [600, 500, 16, 20, 24, 29, 34, 38];
+
+
+    const taskColumnMap = {
+      10: "unloading_equipment_date",
+      11: "scaffolding_date",
+      12: "hauling_date",
+      13: "template_date",
+      14: "boring_holes_date",
+      15: "rail_bracket_date",
+      17: "guide_rail_car_date",
+      18: "guide_rail_cwt_date",
+      19: "guide_rail_gauge_date",
+      21: "door_sills_date",
+      22: "door_jamb_date",
+      23: "door_frame_date",
+      25: "machine_traction_date",
+      26: "machine_beams_date",
+      27: "machine_governor_date",
+      28: "control_panel_date",
+      30: "car_accessories_date",
+      31: "car_wiring_date",
+      32: "travelling_cable_date",
+      33: "counterweight_date",
+      35: "ropes_hoisting_date",
+      36: "ropes_governor_date",
+      37: "ropes_compensating_date",
+      39: "wiring_mr_date",
+      40: "wiring_hoistway_date",
+      41: "pit_ladder_date",
+      42: "initial_test_date",
+      43: "slow_speed_date",
+      44: "high_speed_date",
+      45: "load_test_date",
+      46: "final_adjust_date",
+      47: "features_test_date",
+      48: "handover_date"
+    };
+
+
+    const payload = {};
+    this.tasks
+      .filter(t => !avoidValues.includes(t.id))
+      .forEach(t => {
+        const endDate = new Date(t.start);
+        endDate.setDate(endDate.getDate() + t.duration);
+
+        const col = taskColumnMap[t.id];
+        if (col) {
+          payload[col] = toMySQLDate(t.start);
+          payload[col.replace("_date", "_end_date")] = toMySQLDate(endDate);
+        }
+      });
+
+    return payload;
   }
+
 
 }
 

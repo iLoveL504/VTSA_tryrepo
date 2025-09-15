@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useStoreState } from 'easy-peasy';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Axios } from '../api/axios.js';
 import useAxiosFetch from '../hooks/useAxiosFetch.js';
 import 'ldrs/react/Grid.css'
 
+
 const AssignTeam = () => {
+  const navigate = useNavigate()
   const { projId } = useParams();
   const projects = useStoreState(state => state.projects);
   const foundProject = projects.find(p => p.id === Number(projId));
   const [availableTeams, availableFetchError, availableIsLoading] = useAxiosFetch('http://localhost:4000/teams/no-project');
+  const [availablePE, availablePEFetchError, availablePEIsLoading] = useAxiosFetch('http://localhost:4000/teams/not-assigned-PE');
   const [selectedTeam, setSelectedTeam] = useState(null);
+  const [selectedPE, setSelectedPE] = useState(null);
   const [error, setError] = useState('');
 
   // Group team members by team
@@ -38,24 +42,37 @@ const AssignTeam = () => {
     });
     console.log(teams)
     return Object.values(teams);
-
   };
 
   const [teams, setTeams] = useState([]);
 
   useEffect(() => {
-    if (availableTeams && availableTeams.length > 0) {
+    if (!availableIsLoading && !availablePEIsLoading) {
+      console.log(availablePE)
       const groupedTeams = groupTeams(availableTeams);
       setTeams(groupedTeams);
     }
-  }, [availableTeams]);
+  }, [availableTeams, availablePE]);
 
   const handleTeamSelect = (team) => {
     setSelectedTeam(team);
     setError('');
   };
 
-  const handleSubmit = () => {
+  const handlePESelect = (engineer) => {
+    setSelectedPE(engineer);
+    setError('');
+  };
+
+  const handleSubmit = async () => {
+    console.log(projId)
+    console.log(selectedPE)
+    console.log(selectedTeam)
+    const payload = {
+      projId: projId,
+      ProjectEngineer: selectedPE,
+      Team: selectedTeam
+    }
     if (!selectedTeam) {
       setError('Please select a team');
       return;
@@ -63,10 +80,11 @@ const AssignTeam = () => {
     
     // Submit the selected team to the project
     alert(`Team ${selectedTeam.foreman_name} assigned to project ${foundProject.lift_name}`);
-    // Here you would make an API call to assign the team to the project
+    await Axios.post('/teams/assign', payload)
+    navigate('/projects')
   };
 
-  if (availableIsLoading) {
+  if (availableIsLoading || availablePEIsLoading) {
     return (
       <div className="Content ProjectPage">
         <div className="Loading">
@@ -81,11 +99,44 @@ const AssignTeam = () => {
       <h2>Assign Team to {foundProject.lift_name}</h2>
       <p className="instructions">
         Select a team by clicking on the foreman's name. The team members will be displayed below.
+        You can also assign an available project engineer to the project.
       </p>
       
       {availableFetchError && (
         <div className="error-message">Error loading teams: {availableFetchError}</div>
       )}
+      
+      {/* Available Project Engineers Section */}
+      <div className="available-pe-container">
+        <h3>Available Project Engineers</h3>
+        {availablePEFetchError && (
+          <div className="error-message">Error loading engineers: {availablePEFetchError}</div>
+        )}
+        <div className="pe-list">
+          {availablePE && availablePE.length > 0 ? (
+            availablePE.map(engineer => (
+              <div 
+                key={engineer.employee_id} 
+                className={`pe-card ${selectedPE && selectedPE.employee_id === engineer.employee_id ? 'selected' : ''}`}
+                onClick={() => handlePESelect(engineer)}
+              >
+                <div className="pe-info">
+                  <div className="pe-name">{engineer.first_name} {engineer.last_name}</div>
+                  <span className="pe-username">@{engineer.username}</span>
+                </div>
+                <div className="pe-details">
+                  <span className="pe-id">ID: {engineer.employee_id}</span>
+                  <span className={`pe-status ${engineer.is_active ? 'active' : 'inactive'}`}>
+                    {engineer.is_active ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="no-results">No available project engineers</p>
+          )}
+        </div>
+      </div>
       
       <div className="teams-container">
         <h3>Available Teams</h3>
@@ -137,6 +188,31 @@ const AssignTeam = () => {
               <div className="composition-item">
                 <span className="count">{selectedTeam.members.filter(m => m.job === 'Technician').length}</span>
                 <span className="label">Technicians</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {selectedPE && (
+        <div className="selected-pe">
+          <h3>Selected Engineer</h3>
+          <div className="selected-pe-card">
+            <h4>{selectedPE.first_name} {selectedPE.last_name}</h4>
+            <div className="pe-details-list">
+              <div className="pe-detail">
+                <span className="label">Username:</span>
+                <span className="value">@{selectedPE.username}</span>
+              </div>
+              <div className="pe-detail">
+                <span className="label">Employee ID:</span>
+                <span className="value">{selectedPE.employee_id}</span>
+              </div>
+              <div className="pe-detail">
+                <span className="label">Status:</span>
+                <span className={`value status ${selectedPE.is_active ? 'active' : 'inactive'}`}>
+                  {selectedPE.is_active ? 'Active' : 'Inactive'}
+                </span>
               </div>
             </div>
           </div>

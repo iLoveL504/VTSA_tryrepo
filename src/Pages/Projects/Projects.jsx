@@ -1,18 +1,19 @@
 import React from 'react'
-import { Outlet, Link, Routes, Route, useLocation } from 'react-router-dom';
+import { Outlet, Link, Routes, Route, useNavigate } from 'react-router-dom';
 import { useStoreState } from 'easy-peasy'
 import ProjectList from '../../components/Project/ProjectList'
 
 const Projects = () => {
+  const navigate = useNavigate()
 
+  const handleCreateClick = () => {
+    navigate('create')
+  }
   const projects = useStoreState(state => state.projects)
   return (
     <div className='Content ProjectMenu'>
-      Projects
       <div>
-        <Link to="create">
-          <button>Add New Project</button>
-        </Link>
+          <button onClick={handleCreateClick} style={{display: sessionStorage.getItem('roles') === 'Project Manager' ? 'block' : 'none'}}>Add New Project</button>
       </div>
 
       <div className="project-table-header">
