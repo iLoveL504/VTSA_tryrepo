@@ -15,33 +15,65 @@ import Login from './Pages/Login'
 import Teams from './Pages/Teams'
 import BabyBook from './Pages/BabyBook'
 import CreateProject from './Pages/Projects/CreateProject'
-import { Navigate, Routes, Route, useLocation } from 'react-router-dom';
+import { useNavigate, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth'
 import useAxiosFetch from './hooks/useAxiosFetch'
 import store from './app/store.js'
 import AssignTeam from './Pages/AssignTeam.jsx'
-import test from './Pages/test.jsx'
+import test1 from './Pages/test1.jsx'
 import QAQC_Checklist from './Pages/Documents/QAQC_Checklist.jsx'
 import { useStoreState, useStoreActions } from 'easy-peasy'
 import ScheduleProjects from './Pages/Projects/ScheduleProject.jsx'
 import NotificationPage from './Pages/NotificationPage.jsx'
+import Chat from './Pages/Chat.jsx'
+import NotLoggedIn from './Pages/NotLoggedIn.jsx'
+import { useSocket } from './hooks/useSocket.js'
 
 function App() {
-  console.log(sessionStorage.getItem("isLoggedIn"))
+  const navigate = useNavigate()
   const [ empData, empFetchError, empIsLoading ] = useAxiosFetch('http://localhost:4000/employees')
   const [ projData, projFetchError, projIsLoading ] = useAxiosFetch('http://localhost:4000/projects')
   const [ notifData, notifFetchError, notifIsLoading ] = useAxiosFetch(`http://localhost:4000/notifications/${sessionStorage.getItem('id')}`)
   const dateNow = useStoreState(state => state.date)
+  //const isLoggedIn = useStoreState(state => state.isLoggedIn)
   const setEmployees = useStoreActions(actions => actions.setEmployees)
   const setProjects = useStoreActions(actions => actions.setProjects)
   const setUser = useStoreActions(actions => actions.setUser)
   const setNotifications = useStoreActions(actions => actions.setNotifications)
+  const addNotificationToState = useStoreActions(actions => actions.addNotificationToState)
+  const isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true" ? true : false 
+  // add event listeners to socket hook
+  const socket = useSocket({
+    new_notification: (notification) => {
+      console.log("Received notification:", notification)
+       addNotificationToState(notification)
+    }
+  })
 
   const emps = useStoreState(state => state.employees)
   useEffect(() => {
-    setUser({ username: sessionStorage.getItem('username'), roles: sessionStorage.getItem('roles') })
-    console.log(dateNow)
-  }, [])
+    // Handle login state and user data
+    const loggedIn = sessionStorage.getItem("isLoggedIn") === "true";
+    
+    if (loggedIn) {
+      setUser({ 
+        username: sessionStorage.getItem('username'), 
+        roles: sessionStorage.getItem('roles') 
+      });
+    }
+    
+    console.log(dateNow);
+  }, [setUser]);
+  
+  //join room useEffect
+  useEffect(() => {
+    console.log('useeffect fired here')
+    console.log(socket)
+    if(socket && isLoggedIn === true) {
+      socket.emit("join_notifications", sessionStorage.getItem("id"))
+      
+    }
+  }, [socket, isLoggedIn])
 
 useEffect(() => {
   if (empData) setEmployees(empData)
@@ -55,12 +87,15 @@ useEffect(() => {
   if (notifData) setNotifications(notifData)
 }, [notifData])
   const location = useLocation()
+
   return (
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="login" element={<Login />} />
+        {/* <Route path="/not-logged-in" element={<NotLoggedIn />} /> */}
         <Route element={<Layout />}>
           <Route path="dashboard" element={<Dashboard />} />
+          
 
           <Route path="technician">
             <Route index element={<Technician />} /> 
@@ -79,7 +114,7 @@ useEffect(() => {
             <Route path=":projId/progress" element={<ProjectProgress />} />
             <Route path=":projId/report" element={<ProjectReport />} />
           </Route>
-
+          <Route path="test" element={<NotLoggedIn />} />
           <Route path="PMS">
             <Route index element={<PMS />} />
             
@@ -87,6 +122,10 @@ useEffect(() => {
 
           <Route path="notification">
             <Route path=":notifId" element={<NotificationPage />} />
+            
+          </Route>
+          <Route path="chat">
+            <Route index element={<Chat />} />
             
           </Route>
 

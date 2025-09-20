@@ -10,6 +10,10 @@ export default createStore({
         state.user.username = payload.username
         state.user.roles = payload.roles
     }),
+    isLoggedIn: false,
+    setIsLoggedIn: action((state, payload) => {
+        state.isLoggedIn = payload
+    }),
     employees: [],
     setEmployees: action((state, payload) => {
         state.employees = payload
@@ -18,6 +22,9 @@ export default createStore({
     notifications: [],
     setNotifications: action((state, payload) => {
         state.notifications = payload
+    }),
+    addNotificationToState: action((state, payload) => {
+    state.notifications.push(payload)
     }),
     isLoading: false,
     setIsLoading: action((state, payload) => {

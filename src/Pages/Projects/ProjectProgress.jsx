@@ -6,6 +6,7 @@ import MyGanttComponent from '../../outComponent/GANTT_CHART/GanttChart.jsx'
 import DailyTasks from './DailyTasks.jsx'
 import UniverSpreadsheet from '../../spreadsheet-components/spreadsheet.jsx'
 import "wx-react-gantt/dist/gantt.css";
+import TestChart from "../Tests/TestChart.jsx"
 
 const ProjectProgress = ({ allTaskDates, tasksIsLoading}) => {
     const { projId } = useParams()
@@ -47,7 +48,7 @@ const ProjectProgress = ({ allTaskDates, tasksIsLoading}) => {
             </div>
 
             <div className="progress-content">
-                {activeTab === 'gantt' && <MyGanttComponent id={projId} setPayload={setPayload} setManu={setManufacturingEndMissing} />}
+                {activeTab === 'gantt' && <TestChart id={projId} />}
                 {activeTab === 'accomplishment' && <UniverSpreadsheet />}
                 {activeTab === 'tasks' && <DailyTasks allTaskDates={allTaskDates} tasksIsLoading={tasksIsLoading}/>}
             </div>

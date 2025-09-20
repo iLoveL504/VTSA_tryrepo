@@ -1,4 +1,4 @@
-import React from 'react'
+import{use} from 'react'
 import { useStoreState } from 'easy-peasy'
 import Notification from './Notification'
 import { library } from '@fortawesome/fontawesome-svg-core'

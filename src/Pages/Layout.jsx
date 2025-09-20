@@ -4,10 +4,11 @@ import MenuBar from '../components/UI/MenuBar'
 import { Outlet } from 'react-router-dom'
 import NavBar from '../components/UI/NavBar'
 import { useNavigate } from 'react-router-dom'
+import { useStoreState } from 'easy-peasy'
 
 const Layout = () => {
     const navigate = useNavigate()
-    const isLoggedIn = sessionStorage.getItem("isLoggedIn")
+    const isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true" ? true : false 
     console.log(isLoggedIn)
     const [menuToggle, invertMenuToggle] = useToggle()
     if(!isLoggedIn) return (

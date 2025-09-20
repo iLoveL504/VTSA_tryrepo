@@ -11,6 +11,7 @@ import { jwtDecode } from "jwt-decode";
 
 const Login = ({setRoles}) => {
     const setAuthUser = useStoreActions((actions) => actions.setUser)
+    const setIsLoggedIn = useStoreActions((actions) => actions.setIsLoggedIn)
     const navigate = useNavigate()
 
     const [showPassword, setShowPassword] = useToggle();
@@ -82,6 +83,8 @@ const Login = ({setRoles}) => {
                   sessionStorage.setItem("roles", roles)
                   sessionStorage.setItem("id", id)
                   sessionStorage.setItem("isLoggedIn", true)
+                  sessionStorage.setItem("token", result.data.accessToken)
+                  //setIsLoggedIn(true)
                   console.log(roles)
                   setAuthUser({username: user, roles: result.data.roles})
                   navigate('/dashboard')
